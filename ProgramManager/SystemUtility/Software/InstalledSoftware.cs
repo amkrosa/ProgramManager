@@ -17,17 +17,17 @@ namespace ProgramManager.SystemUtility
             return _instance;
         }
 
-        private Dictionary<string, string> _installedSoftwareList;
+        private List<Software> _installedSoftwareList;
 
-        public Dictionary<string, string> InstalledSoftwareList { get; private set;}
+        public List<Software> InstalledSoftwareList { get; private set;}
 
         private InstalledSoftware() { }
 
-        private Dictionary<string, string> GetInstalledSoftwareDictionary()
+        private List<Software> GetInstalledSoftwareList()
         {
             string displayName;
             string displayVersion;
-            Dictionary<string, string> installedSoftwareDictionary = new Dictionary<string, string>();
+            List<Software> installedSoftwareList = new List<Software>();
 
             using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", false))
             {
@@ -37,11 +37,12 @@ namespace ProgramManager.SystemUtility
                     displayName = subkey.GetValue("DisplayName") as string;
                     displayVersion = subkey.GetValue("DisplayVersion") as string;
                     displayVersion = string.IsNullOrEmpty(displayVersion) ? "unknown" : displayVersion;
+                    Software software = new Software(displayName.ToLower(), displayVersion.ToLower());
 
-                    if (string.IsNullOrEmpty(displayName) || installedSoftwareDictionary.ContainsKey(displayName.ToLower()))
+                    if (string.IsNullOrEmpty(displayName) || installedSoftwareList.Contains(software))
                         continue;
 
-                    installedSoftwareDictionary.Add(displayName.ToLower(), displayVersion.ToLower());
+                    installedSoftwareList.Add(software);
                 }
             }
 
@@ -54,11 +55,12 @@ namespace ProgramManager.SystemUtility
                     displayName = subkey.GetValue("DisplayName") as string;
                     displayVersion = subkey.GetValue("DisplayVersion") as string;
                     displayVersion = string.IsNullOrEmpty(displayVersion) ? "unknown" : displayVersion;
+                    Software software = new Software(displayName.ToLower(), displayVersion.ToLower());
 
-                    if (string.IsNullOrEmpty(displayName) || installedSoftwareDictionary.ContainsKey(displayName.ToLower()))
+                    if (string.IsNullOrEmpty(displayName) || installedSoftwareList.Contains(software))
                         continue;
 
-                    installedSoftwareDictionary.Add(displayName.ToLower(), displayVersion.ToLower());
+                    installedSoftwareList.Add(software);
                 }
             }
 
@@ -71,11 +73,12 @@ namespace ProgramManager.SystemUtility
                     displayName = subkey.GetValue("DisplayName") as string;
                     displayVersion = subkey.GetValue("DisplayVersion") as string;
                     displayVersion = string.IsNullOrEmpty(displayVersion) ? "unknown" : displayVersion;
+                    Software software = new Software(displayName.ToLower(), displayVersion.ToLower());
 
-                    if (string.IsNullOrEmpty(displayName) || installedSoftwareDictionary.ContainsKey(displayName.ToLower()))
+                    if (string.IsNullOrEmpty(displayName) || installedSoftwareList.Contains(software))
                         continue;
 
-                    installedSoftwareDictionary.Add(displayName.ToLower(), displayVersion.ToLower());
+                    installedSoftwareList.Add(software);
                 }
             }
 
@@ -87,22 +90,22 @@ namespace ProgramManager.SystemUtility
                     displayName = subkey.GetValue("DisplayName") as string;
                     displayVersion = subkey.GetValue("DisplayVersion") as string;
                     displayVersion = string.IsNullOrEmpty(displayVersion) ? "unknown" : displayVersion;
+                    Software software = new Software(displayName.ToLower(), displayVersion.ToLower());
 
-
-                    if (string.IsNullOrEmpty(displayName) || installedSoftwareDictionary.ContainsKey(displayName.ToLower()))
+                    if (string.IsNullOrEmpty(displayName) || installedSoftwareList.Contains(software))
                         continue;
 
-                    installedSoftwareDictionary.Add(displayName.ToLower(), displayVersion.ToLower());
+                    installedSoftwareList.Add(software);
                 }
             }
 
-            return installedSoftwareDictionary;
+            return installedSoftwareList;
         }
 
         public void Update()
         {
             InstalledSoftware installedSoftware = InstalledSoftware.GetInstance();
-            InstalledSoftwareList = GetInstalledSoftwareDictionary();
+            InstalledSoftwareList = GetInstalledSoftwareList();
         }
     }
 }
