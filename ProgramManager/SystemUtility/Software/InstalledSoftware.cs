@@ -30,99 +30,49 @@ namespace ProgramManager.SystemUtility
 
         private InstalledSoftware() { }
 
-        private void GetInstalledSoftwareList()
+        private void AddSoftwareByRegistryKey(RegistryKey registryKey, bool isBaseKey)
         {
             string displayName;
             string displayVersion;
+            RegistryKey subKey;
+            using (registryKey)
+            {
+                subKey = isBaseKey ? registryKey.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", false) :
+                    registryKey;
+
+                foreach (String keyName in subKey.GetSubKeyNames())
+                {
+                    RegistryKey subkey = subKey.OpenSubKey(keyName);
+                    displayName = subkey.GetValue("DisplayName") as string;
+                    displayVersion = subkey.GetValue("DisplayVersion") as string;
+                    displayVersion = string.IsNullOrEmpty(displayVersion) ? "unknown" : displayVersion;
+
+                    if (string.IsNullOrEmpty(displayName))
+                        continue;
+
+                    Software software = new Software(displayName.ToLower(), displayVersion.ToLower());
+
+                    if (_installedSoftwareList.Contains(software))
+                        continue;
+
+                    _installedSoftwareList.Add(software);
+                }
+            }
+        }
+
+        private void GetInstalledSoftwareList()
+        {
             _installedSoftwareList = new ObservableCollection<Software>();
 
-            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", false))
-            {
-                foreach (String keyName in key.GetSubKeyNames())
-                {
-                    RegistryKey subkey = key.OpenSubKey(keyName);
-                    displayName = subkey.GetValue("DisplayName") as string;
-                    displayVersion = subkey.GetValue("DisplayVersion") as string;
-                    displayVersion = string.IsNullOrEmpty(displayVersion) ? "unknown" : displayVersion;
+            RegistryKey subKeyUninstall = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
+            RegistryKey baseKeyUninstall64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
+            RegistryKey baseKeyUninstall32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
+            RegistryKey subKeyWow6432Node = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall");
 
-                    if (string.IsNullOrEmpty(displayName))
-                        continue;
-
-                    Software software = new Software(displayName.ToLower(), displayVersion.ToLower());
-
-                    if (_installedSoftwareList.Contains(software))
-                        continue;
-
-                    _installedSoftwareList.Add(software);
-                }
-            }
-
-            using (var localMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
-            {
-                var key = localMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", false);
-                foreach (String keyName in key.GetSubKeyNames())
-                {
-                    RegistryKey subkey = key.OpenSubKey(keyName);
-                    displayName = subkey.GetValue("DisplayName") as string;
-                    displayVersion = subkey.GetValue("DisplayVersion") as string;
-                    displayVersion = string.IsNullOrEmpty(displayVersion) ? "unknown" : displayVersion;
-
-                    if (string.IsNullOrEmpty(displayName))
-                        continue;
-
-                    Software software = new Software(displayName.ToLower(), displayVersion.ToLower());
-
-                    if (_installedSoftwareList.Contains(software))
-                        continue;
-
-                    _installedSoftwareList.Add(software);
-                }
-            }
-
-            using (var localMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
-            {
-                var key = localMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", false);
-                foreach (String keyName in key.GetSubKeyNames())
-                {
-                    RegistryKey subkey = key.OpenSubKey(keyName);
-                    displayName = subkey.GetValue("DisplayName") as string;
-                    displayVersion = subkey.GetValue("DisplayVersion") as string;
-                    displayVersion = string.IsNullOrEmpty(displayVersion) ? "unknown" : displayVersion;
-
-                    if (string.IsNullOrEmpty(displayName))
-                        continue;
-
-                    Software software = new Software(displayName.ToLower(), displayVersion.ToLower());
-
-                    if (_installedSoftwareList.Contains(software))
-                        continue;
-
-                    _installedSoftwareList.Add(software);
-                }
-            }
-
-            using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall", false))
-            {
-                foreach (String keyName in key.GetSubKeyNames())
-                {
-                    RegistryKey subkey = key.OpenSubKey(keyName);
-                    displayName = subkey.GetValue("DisplayName") as string;
-                    displayVersion = subkey.GetValue("DisplayVersion") as string;
-                    displayVersion = string.IsNullOrEmpty(displayVersion) ? "unknown" : displayVersion;
-
-                    if (string.IsNullOrEmpty(displayName))
-                        continue;
-
-                    Software software = new Software(displayName.ToLower(), displayVersion.ToLower());
-
-                    if (_installedSoftwareList.Contains(software))
-                        continue;
-
-                    _installedSoftwareList.Add(software);
-                }
-            }
-
-            
+            AddSoftwareByRegistryKey(subKeyUninstall, false);
+            AddSoftwareByRegistryKey(baseKeyUninstall64, true);
+            AddSoftwareByRegistryKey(baseKeyUninstall32, true);
+            AddSoftwareByRegistryKey(subKeyWow6432Node, false);
         }
     }
 }
