@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProgramManager.SystemUtility;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,11 @@ namespace ProgramManager
         public MainWindow()
         {
             InitializeComponent();
+            InstalledSoftware l = InstalledSoftware.GetInstance();
+            foreach(KeyValuePair<string, string> entry in l.InstalledSoftwareList)
+            {
+                System.Diagnostics.Trace.WriteLine("Name => "+entry.Key+" with version => "+entry.Value);
+            }
         }
     }
 }
