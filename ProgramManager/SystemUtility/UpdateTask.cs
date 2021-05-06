@@ -8,9 +8,10 @@ namespace ProgramManager.SystemUtility
 {
     class UpdateTask
     {
-        InstalledSoftware installedSoftware;
+        InstalledSoftwareHandler installedSoftwareHandler;
+
         public UpdateTask() {
-            installedSoftware = InstalledSoftware.GetInstance();
+            installedSoftwareHandler = new InstalledSoftwareHandler();
         }
 
         public void Run(int interval)
@@ -23,7 +24,7 @@ namespace ProgramManager.SystemUtility
 
         private void Tick(object sender, EventArgs e)
         {
-            installedSoftware.Update();
+            installedSoftwareHandler.Update();
         }
 
     }

@@ -24,6 +24,9 @@ namespace ProgramManager
         public MainWindow()
         {
             InitializeComponent();
+
+            UpdateTask ut = new UpdateTask();
+            ut.Run(5);
         }
     }
 }
