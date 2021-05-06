@@ -96,8 +96,6 @@ namespace ProgramManager.SystemUtility
                 }
             }
 
-            System.Diagnostics.Trace.WriteLine("Updating installedSoftwareDictionary is done...");
-
             return installedSoftwareDictionary;
         }
 
