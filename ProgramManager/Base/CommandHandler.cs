@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace LogDownloader
+namespace ProgramManager.Base
 {
     class CommandHandler : ICommand
     {
