@@ -17,9 +17,9 @@ namespace ProgramManager.SystemUtility
             return _instance;
         }
 
-        public Dictionary<string, string> InstalledSoftwareList {
-            get => GetInstalledSoftwareDictionary();
-        }
+        private Dictionary<string, string> _installedSoftwareList;
+
+        public Dictionary<string, string> InstalledSoftwareList { get; private set;}
 
         private InstalledSoftware() { }
 
@@ -95,8 +95,16 @@ namespace ProgramManager.SystemUtility
                     installedSoftwareDictionary.Add(displayName.ToLower(), displayVersion.ToLower());
                 }
             }
+
+            System.Diagnostics.Trace.WriteLine("Updating installedSoftwareDictionary is done...");
+
             return installedSoftwareDictionary;
         }
 
+        public void Update()
+        {
+            InstalledSoftware installedSoftware = InstalledSoftware.GetInstance();
+            InstalledSoftwareList = GetInstalledSoftwareDictionary();
+        }
     }
 }
