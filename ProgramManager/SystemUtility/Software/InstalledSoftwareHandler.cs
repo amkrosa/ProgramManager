@@ -8,21 +8,33 @@ namespace ProgramManager.SystemUtility
 {
     public class InstalledSoftwareHandler
     {
-        private ObservableCollection<Software> observableInstalledSoftware;
-        private InstalledSoftware installedSoftware;
+        private ObservableCollection<Software> _oldInstalledSoftWareList;
+        private InstalledSoftware _installedSoftware;
 
         public InstalledSoftwareHandler()
-        { 
-
+        {
+            _installedSoftware = InstalledSoftware.GetInstance();
+            _oldInstalledSoftWareList = new ObservableCollection<Software>(_installedSoftware.InstalledSoftwareList);
+            _installedSoftware.InstalledSoftwareList.CollectionChanged += OnCollectionChanged;
         }
 
-        private void HandleChange(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            int olditems_count = 0;
+            int newitems_count = 0;
+            if (e.OldItems != null)
+                olditems_count = e.OldItems.Count;
+            if (e.NewItems != null) {
+            }           
         }
 
         public void Update()
         {
-
+            _oldInstalledSoftWareList = new ObservableCollection<Software>(_installedSoftware.InstalledSoftwareList);
+            _installedSoftware.UpdateInstalledSoftwareList();
+            System.Diagnostics.Trace.WriteLine("Update executed. New list count: " 
+                + _installedSoftware.InstalledSoftwareCount
+                +", old list count: "+_oldInstalledSoftWareList.Count);
         }
 
     }

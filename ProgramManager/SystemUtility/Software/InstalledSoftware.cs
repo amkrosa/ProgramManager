@@ -20,15 +20,17 @@ namespace ProgramManager.SystemUtility
 
         private ObservableCollection<Software> _installedSoftwareList;
 
-        public ObservableCollection<Software> InstalledSoftwareList { 
-            get 
-            {
-                GetInstalledSoftwareList();
-                return _installedSoftwareList;
-            }
+        public ObservableCollection<Software> InstalledSoftwareList { get => _installedSoftwareList; }
+
+        public int InstalledSoftwareCount
+        {
+            get => _installedSoftwareList.Count;
         }
 
-        private InstalledSoftware() { }
+        private InstalledSoftware() {
+            _installedSoftwareList = new ObservableCollection<Software>();
+            GetInstalledSoftwareList();
+        }
 
         private void AddSoftwareByRegistryKey(RegistryKey registryKey, bool isBaseKey)
         {
@@ -62,7 +64,7 @@ namespace ProgramManager.SystemUtility
 
         private void GetInstalledSoftwareList()
         {
-            _installedSoftwareList = new ObservableCollection<Software>();
+            _installedSoftwareList.Clear();
 
             RegistryKey subKeyUninstall = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
             RegistryKey baseKeyUninstall64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
@@ -73,6 +75,11 @@ namespace ProgramManager.SystemUtility
             AddSoftwareByRegistryKey(baseKeyUninstall64, true);
             AddSoftwareByRegistryKey(baseKeyUninstall32, true);
             AddSoftwareByRegistryKey(subKeyWow6432Node, false);
+        }
+
+        public void UpdateInstalledSoftwareList()
+        {
+            GetInstalledSoftwareList();
         }
     }
 }
