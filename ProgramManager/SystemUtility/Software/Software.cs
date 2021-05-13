@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ProgramManager.SystemUtility
 {
-    class Software
+    class Software : IEquatable<Software>
     {
         public string Name { get; set; }
         public string Version { get; set; }
@@ -15,5 +15,18 @@ namespace ProgramManager.SystemUtility
             this.Version = version;
             isUpdateNeeded = false;
         }
+        public override bool Equals(Object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+                return false;
+            Software s = (Software)obj;
+            bool isNameEqual = this.Name == s.Name;
+            bool isVersionEqual = this.Version == s.Version;
+            return isNameEqual && isVersionEqual;
+        }
+
+        bool IEquatable<Software>.Equals(Software other) => Equals(other);
+        public override int GetHashCode() => (Name, Version).GetHashCode();
+
     }
 }
