@@ -6,6 +6,9 @@ using System.Text;
 
 namespace ProgramManager.SystemUtility
 {
+    /// <summary>
+    /// Singleton przechowywujacy oraz aktualizujacy liste zawierajaca aktualnie zainstalowane programy. 
+    /// </summary>
     class InstalledSoftware
     {
         private static InstalledSoftware _instance;
@@ -19,19 +22,22 @@ namespace ProgramManager.SystemUtility
         }
 
         private ObservableCollection<Software> _installedSoftwareList;
-
+        /// <summary>
+        /// Lista aktualnie zainstalowanych programow
+        /// </summary>
         public ObservableCollection<Software> InstalledSoftwareList { get => _installedSoftwareList; }
 
-        public int InstalledSoftwareCount
+        private InstalledSoftware()
         {
-            get => _installedSoftwareList.Count;
-        }
-
-        private InstalledSoftware() {
             _installedSoftwareList = new ObservableCollection<Software>();
             GetInstalledSoftwareList();
         }
 
+        /// <summary>
+        /// Dodanie programow do <see cref="InstalledSoftware.InstalledSoftwareList"/> na bazie podanego <see cref="RegistryKey"/>.
+        /// </summary>
+        /// <param name="registryKey">Klucz rejestru</param>
+        /// <param name="isBaseKey"></param>
         private void AddSoftwareByRegistryKey(RegistryKey registryKey, bool isBaseKey)
         {
             string displayName;
@@ -62,6 +68,9 @@ namespace ProgramManager.SystemUtility
             }
         }
 
+        /// <summary>
+        /// Wyczyszczenie <see cref="InstalledSoftwareList"/>, a nastepnie dodanie programow z 4 roznych lokalizacji w rejestrze.
+        /// </summary>
         private void GetInstalledSoftwareList()
         {
             _installedSoftwareList.Clear();
@@ -77,6 +86,9 @@ namespace ProgramManager.SystemUtility
             AddSoftwareByRegistryKey(subKeyWow6432Node, false);
         }
 
+        /// <summary>
+        /// Publiczna metoda do bezposredniej aktualizacji <see cref="InstalledSoftwareList"/>
+        /// </summary>
         public void UpdateInstalledSoftwareList()
         {
             GetInstalledSoftwareList();

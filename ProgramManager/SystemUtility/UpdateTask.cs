@@ -6,6 +6,9 @@ using System.Windows.Threading;
 
 namespace ProgramManager.SystemUtility
 {
+    /// <summary>
+    /// Task wykonywany celem aktualizacji stanu listy programow
+    /// </summary>
     class UpdateTask
     {
         InstalledSoftwareHandler installedSoftwareHandler;
@@ -13,7 +16,10 @@ namespace ProgramManager.SystemUtility
         public UpdateTask() {
             installedSoftwareHandler = new InstalledSoftwareHandler();
         }
-
+        /// <summary>
+        /// Utworzenie nowego <see cref="DispatcherTimer"/> i dodanie metody <see cref="Tick"/> do eventu <see cref="DispatcherTimer.Tick"/>.
+        /// </summary>
+        /// <param name="interval">Interwal czasowy liczony w sekundach</param>
         public void Run(int interval)
         {
             DispatcherTimer timer = new DispatcherTimer();
@@ -22,6 +28,11 @@ namespace ProgramManager.SystemUtility
             timer.Start();
         }
 
+        /// <summary>
+        /// Wywolanie metody <see cref="InstalledSoftwareHandler.Update"/> do aktualizacji stanu listy.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Tick(object sender, EventArgs e)
         {
             installedSoftwareHandler.Update();

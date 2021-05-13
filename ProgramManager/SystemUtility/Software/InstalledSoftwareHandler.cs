@@ -7,12 +7,25 @@ using System.Text;
 
 namespace ProgramManager.SystemUtility
 {
+    /// <summary>
+    /// Klasa do zarzadzania zmianami w <see cref="InstalledSoftware"/>.
+    /// </summary>
     public class InstalledSoftwareHandler
     {
         private ObservableCollection<Software> _oldInstalledSoftWareList;
         private InstalledSoftware _installedSoftware;
+        /// <summary>
+        /// Przechowywanie zmienionych programow. Uzyty tryb wyliczeniowy <see cref="SoftwareChangeStatus"/> do przechowania rodzaju zmiany.
+        /// </summary>
         private Dictionary<Software, SoftwareChangeStatus> _changedSoftwareDictionary;
 
+        /// <summary>
+        /// Inicjalizacja instancji <see cref="InstalledSoftwareHandler"/>, gdzie pobierana jest instancja <see cref="InstalledSoftware"/>, 
+        /// inicjalizowany jest slownik <see cref="_changedSoftwareDictionary"/>, 
+        /// inicjalizowana jest kolekcja <see cref="_oldInstalledSoftWareList"/>
+        /// na podstawie konstruktora <see cref="ObservableCollection{T}.ObservableCollection(List{T})"/>, ktory kopiuje elementy z <see cref="InstalledSoftware.InstalledSoftwareList"/>.
+        /// Dodawana jest metoda <see cref="OnCollectionChanged"/> do eventu <see cref="ObservableCollection{T}.CollectionChanged"/>.
+        /// </summary>
         public InstalledSoftwareHandler()
         {
             _installedSoftware = InstalledSoftware.GetInstance();
@@ -21,55 +34,47 @@ namespace ProgramManager.SystemUtility
             _installedSoftware.InstalledSoftwareList.CollectionChanged += OnCollectionChanged;
         }
 
+        /// <summary>
+        /// Metoda dodana do eventu <see cref="ObservableCollection{T}.CollectionChanged"/>. 
+        /// Wywolywana w momencie zmiany kolekcji <see cref="InstalledSoftware.InstalledSoftwareList"/>
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            int olditems_count = 0;
-            int newitems_count = 0;
-            if (e.OldItems != null)
-                olditems_count = e.OldItems.Count;
-            if (e.NewItems != null) {
-            }           
         }
 
+        /// <summary>
+        /// Porownuje dwie kolekcje - <see cref="_oldInstalledSoftWareList"/> oraz <see cref="InstalledSoftware.InstalledSoftwareList"/>
+        /// za pomoca <see cref="Enumerable.Except{TSource}(IEnumerable{TSource}, IEnumerable{TSource})"/>.
+        /// Nastepnie dodaje wyniki do <see cref="_changedSoftwareDictionary"/>.
+        /// </summary>
         private void CompareCollections()
         {
-            List<Software> oldList = new List<Software>(_oldInstalledSoftWareList);
-            List<Software> newList = new List<Software>(_installedSoftware.InstalledSoftwareList);
-
-            var removed = oldList.Except(newList).ToList();
-            var added = newList.Except(oldList).ToList();
+            var removed = _oldInstalledSoftWareList.Except(_installedSoftware.InstalledSoftwareList).ToList();
+            var added = _installedSoftware.InstalledSoftwareList.Except(_oldInstalledSoftWareList).ToList();
 
             if (removed != null)
             {
-                foreach(Software s in removed)
-                {
-                    System.Diagnostics.Trace.WriteLine("removed => "+s.Name);
-                }
+                foreach (Software s in removed)
+                    _changedSoftwareDictionary.Add(s, SoftwareChangeStatus.REMOVED);
             }
             if (added != null)
             {
                 foreach (Software s in added)
-                {
-                    System.Diagnostics.Trace.WriteLine("added => " + s.Name);
-                }
+                    _changedSoftwareDictionary.Add(s, SoftwareChangeStatus.ADDED);
             }
         }
 
+        /// <summary>
+        /// Metoda wywolywana w <see cref="UpdateTask.Tick(object, EventArgs)"/> celem aktualizacji listy programow.
+        /// </summary>
         public void Update()
         {
             _oldInstalledSoftWareList = new ObservableCollection<Software>(_installedSoftware.InstalledSoftwareList);
             _installedSoftware.UpdateInstalledSoftwareList();
             CompareCollections();
-            System.Diagnostics.Trace.WriteLine("Update executed. New list count: " 
-                + _installedSoftware.InstalledSoftwareCount
-                +", old list count: "+_oldInstalledSoftWareList.Count);
-            System.Diagnostics.Trace.WriteLine("Changed done:");
-            /*foreach (KeyValuePair<Software, SoftwareChangeStatus> entry in _changedSoftwareDictionary)
-            {
-                Software key = entry.Key;
-                SoftwareChangeStatus value = entry.Value;
-                System.Diagnostics.Trace.WriteLine(key.Name + " => " + value);
-            }*/
+
             _changedSoftwareDictionary.Clear();
         }
 
