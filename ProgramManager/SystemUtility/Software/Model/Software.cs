@@ -8,7 +8,7 @@ namespace ProgramManager.SystemUtility
     /// Model jednego programu wraz z podstawowymi informacjami. Implementuje <see cref="IEquatable{T}"/>
     /// by moc porownywac listy zlozone z tej klasy.
     /// </summary>
-    class Software : IEquatable<Software>
+    public class Software : IEquatable<Software>
     {
         public string Name { get; set; }
         public string Version { get; set; }

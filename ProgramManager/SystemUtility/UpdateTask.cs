@@ -9,12 +9,16 @@ namespace ProgramManager.SystemUtility
     /// <summary>
     /// Task wykonywany celem aktualizacji stanu listy programow
     /// </summary>
-    class UpdateTask
+    public class UpdateTask
     {
         InstalledSoftwareHandler installedSoftwareHandler;
 
         public UpdateTask() {
             installedSoftwareHandler = new InstalledSoftwareHandler();
+        }
+        public UpdateTask(InstalledSoftwareHandler installedSoftwareHandler)
+        {
+            this.installedSoftwareHandler = installedSoftwareHandler;
         }
         /// <summary>
         /// Utworzenie nowego <see cref="DispatcherTimer"/> i dodanie metody <see cref="Tick"/> do eventu <see cref="DispatcherTimer.Tick"/>.

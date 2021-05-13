@@ -17,11 +17,11 @@ namespace ProgramManager.SystemUtility
         /// <summary>
         /// Przechowywanie zmienionych programow. Uzyty tryb wyliczeniowy <see cref="SoftwareChangeStatus"/> do przechowania rodzaju zmiany.
         /// </summary>
-        private Dictionary<Software, SoftwareChangeStatus> _changedSoftwareDictionary;
+        public ObservableCollection<KeyValuePair<Software, SoftwareChangeStatus>> ChangedSoftwareDictionary { get; set; }
 
         /// <summary>
         /// Inicjalizacja instancji <see cref="InstalledSoftwareHandler"/>, gdzie pobierana jest instancja <see cref="InstalledSoftware"/>, 
-        /// inicjalizowany jest slownik <see cref="_changedSoftwareDictionary"/>, 
+        /// inicjalizowany jest kolekcja <see cref="_changedSoftwareDictionary"/>, 
         /// inicjalizowana jest kolekcja <see cref="_oldInstalledSoftWareList"/>
         /// na podstawie konstruktora <see cref="ObservableCollection{T}.ObservableCollection(List{T})"/>, ktory kopiuje elementy z <see cref="InstalledSoftware.InstalledSoftwareList"/>.
         /// Dodawana jest metoda <see cref="OnCollectionChanged"/> do eventu <see cref="ObservableCollection{T}.CollectionChanged"/>.
@@ -29,7 +29,7 @@ namespace ProgramManager.SystemUtility
         public InstalledSoftwareHandler()
         {
             _installedSoftware = InstalledSoftware.GetInstance();
-            _changedSoftwareDictionary = new Dictionary<Software, SoftwareChangeStatus>();
+            ChangedSoftwareDictionary = new ObservableCollection<KeyValuePair<Software, SoftwareChangeStatus>>();
             _oldInstalledSoftWareList = new ObservableCollection<Software>(_installedSoftware.InstalledSoftwareList);
             _installedSoftware.InstalledSoftwareList.CollectionChanged += OnCollectionChanged;
         }
@@ -57,12 +57,12 @@ namespace ProgramManager.SystemUtility
             if (removed != null)
             {
                 foreach (Software s in removed)
-                    _changedSoftwareDictionary.Add(s, SoftwareChangeStatus.REMOVED);
+                    ChangedSoftwareDictionary.Add(new KeyValuePair<Software, SoftwareChangeStatus>(s, SoftwareChangeStatus.REMOVED));
             }
             if (added != null)
             {
                 foreach (Software s in added)
-                    _changedSoftwareDictionary.Add(s, SoftwareChangeStatus.ADDED);
+                    ChangedSoftwareDictionary.Add(new KeyValuePair<Software, SoftwareChangeStatus>(s, SoftwareChangeStatus.ADDED));
             }
         }
 
@@ -74,8 +74,7 @@ namespace ProgramManager.SystemUtility
             _oldInstalledSoftWareList = new ObservableCollection<Software>(_installedSoftware.InstalledSoftwareList);
             _installedSoftware.UpdateInstalledSoftwareList();
             CompareCollections();
-
-            _changedSoftwareDictionary.Clear();
+            ChangedSoftwareDictionary.Add(new KeyValuePair<Software, SoftwareChangeStatus>(new Software("test", "1.0"), SoftwareChangeStatus.ADDED));
         }
 
     }

@@ -6,7 +6,26 @@
         xmlns:local="clr-namespace:ProgramManager"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <Grid Margin="0,0,10,-6">
+        <DataGrid Margin="10,102,10,0" VerticalAlignment="Top" ItemsSource="{Binding SoftwareList}" AutoGenerateColumns="False" IsReadOnly="True" Height="185">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                <DataGridTextColumn Header="Version" Binding="{Binding Version}"/>
+                <DataGridTextColumn Header="Need update" Binding="{Binding isUpdateNeeded}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <DataGrid Margin="10,304,10,0" VerticalAlignment="Top" ItemsSource="{Binding ChangedSoftwareList}" AutoGenerateColumns="False" IsReadOnly="True" Height="100">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Key.Name}"/>
+                <DataGridTextColumn Header="Version" Binding="{Binding Key.Version}"/>
+                <DataGridTextColumn Header="Need update" Binding="{Binding Key.isUpdateNeeded}"/>
+                <DataGridTextColumn Header="Change" Binding="{Binding Value}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <TextBox x:Name="SearchTextBox" HorizontalAlignment="Left" Margin="60,75,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <Label x:Name="SearchLabel" Content="Search" Margin="10,70,745,336"/>
+        <Button x:Name="ForceRefreshButton" Content="Refresh" HorizontalAlignment="Left" Margin="730,74,0,0" VerticalAlignment="Top" Width="60"/>
 
     </Grid>
 </Window>

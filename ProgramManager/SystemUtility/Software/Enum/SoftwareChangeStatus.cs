@@ -7,7 +7,7 @@ namespace ProgramManager.SystemUtility
     /// <summary>
     /// 
     /// </summary>
-    enum SoftwareChangeStatus
+    public enum SoftwareChangeStatus
     {
         /// <summary>
         /// Program dodany do listy programow

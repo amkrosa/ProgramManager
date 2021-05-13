@@ -23,9 +23,8 @@ namespace ProgramManager
     {
         public MainWindow()
         {
-            UpdateTask ut = new UpdateTask();
-            ut.Run(3);
             InitializeComponent();
+            this.DataContext = new InstalledSoftwareViewModel();
         }
     }
 }
